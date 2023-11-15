@@ -1,4 +1,7 @@
 const express = require('express')
+const multer = require('multer')
+const fs = require('fs');
+const path = require('path');
 const mysql = require('mysql')
 const cors = require('cors')
 
@@ -48,7 +51,18 @@ app.get('/api/posts/:id', (request, response) => {
     })
 })
 
-app.post('/api/posts/', (request, response) => {
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, './uploads')
+    },
+    filename: (req, file, cb) => {
+        cb(null, `${Date.now()}_${Math.floor(Math.random() * 1000)}_${file.originalname}`)
+    }
+})
+
+const upload = multer({ storage: storage })
+
+app.post('/api/posts/', upload.single('image'), (request, response) => {
     let query = `CREATE TABLE IF NOT EXISTS posts (
         post_id INT NOT NULL AUTO_INCREMENT,
         title VARCHAR(50) NOT NULL,
@@ -60,8 +74,9 @@ app.post('/api/posts/', (request, response) => {
     db.query(query, err => {
         if (err) throw err
     })
-
-    const post = request.body
+    const { title, content, date } = request.body
+    const preview_url = './uploads/' +request.file.filename
+    const post = {title, content, date, preview_url}
     query = `INSERT INTO posts SET ?`
     db.query(query, post, (err, result) => {
         if (err) {

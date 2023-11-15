@@ -4,26 +4,42 @@ import postService from '../../services/posts'
 import './PostForm.css'
 
 const PostForm = () => {
-  // Do I really need to use state var?
-  const [postTitle, setPostTitle] = useState('')
-  const [postContent, setPostContent] = useState('')
+  const [postData, setPostData] = useState({
+    title: '',
+    content: '',
+    date: '',
+    image: null,
+  })
 
-  const handlePostTitleChange = (event) => {
-    setPostTitle(event.target.value)
+  const handleInputChange = (event) => {
+    console.log([event.target.name], event.target.value)
+    setPostData({
+      ...postData,
+      [event.target.name]: event.target.value
+    })
+  }
+
+  const handleImageChange = (event) => {
+    setPostData({
+      ...postData,
+      image: event.target.files[0]
+    })
+    console.log(postData)
   }
 
   const handleSubmit = (event) => {
+    //console.log(event)
     // Preventing page reloading
     event.preventDefault()
-    console.log('submitted!')
 
     // Creating object
     // TODO: ADD preview_url
-    const post = {
-      title: postTitle,
-      content: postContent,
-      date: format(new Date(), 'YYYY-MM-DD')
-    }
+    const post = new FormData()
+    post.append('title', postData.title)
+    post.append('content', postData.content)
+    post.append('date', format(new Date(), 'YYYY-MM-DD'))
+    post.append('image', postData.image)
+
     console.log(post)
 
     // Sending object to the server
@@ -31,19 +47,21 @@ const PostForm = () => {
     .create(post)
     
     // Clearing up
-    setPostTitle('')
-    setPostContent('')
+    setPostData({
+      title: '',
+      content: '',
+      date: '',
+      image: null,
+    })
   }
 
   return (
     <div className='post-form'>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} enctype="multipart/form-data">
         <div>
           <label>
               Title:
-              <div>
-              <input className='post-form-title' type='text' value={postTitle} onChange={handlePostTitleChange} />
-              </div>
+              <input className='post-form-title' type='text' name='title' onChange={handleInputChange} />
           </label>
         </div>
         {/* Creating a post area.*/}
@@ -51,15 +69,16 @@ const PostForm = () => {
           Write your post:
           <div>
             <textarea
-            name='postContent'
-            placeholder={`What's on your mind?`}
-            value={postContent}
-            onChange={event => setPostContent(event.target.value)}
-            maxLength={256}
+              name='content'
+              placeholder={`What's on your mind?`}
+              value={postData.content}
+              onChange={handleInputChange}
+              maxLength={256}
             />
             </div>
         </label>
-        <button type='submit'>Post</button>
+        <button className='post-form-submit' type='submit'>Post</button>
+        <input className='post-form-add-image' type='file' accept='image/*' name='image'onChange={handleImageChange} />
       </form>
     </div>
   )
