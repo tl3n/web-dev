@@ -1,5 +1,5 @@
 import axios from 'axios'
-const baseUrl = '/api/posts'
+const baseUrl = 'http://localhost:3001/api/posts'
 
 const get = (id) => axios.get(`${baseUrl}/${id}`).then(response => response.data)
 

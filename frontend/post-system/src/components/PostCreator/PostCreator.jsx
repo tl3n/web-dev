@@ -2,7 +2,7 @@ import React from 'react'
 import './PostCreator.css'
 import PostForm from '../PostForm/PostForm.jsx'
 
-
+// TODO: ADD IMAGE SUPPORT
 const PostCreator = props => {
     if (!props.show) {
         return null

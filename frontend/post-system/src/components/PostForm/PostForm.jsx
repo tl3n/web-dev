@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { format } from 'fecha' // Formatting date to SQL format
 import postService from '../../services/posts'
 import './PostForm.css'
 
@@ -15,30 +16,19 @@ const PostForm = () => {
     // Preventing page reloading
     event.preventDefault()
     console.log('submitted!')
-    
-    // Reading data from form by converting it to json
-    // const formData = new FormData(event.target)
-    // const formJson = Object.fromEntries(formData.entries());
-    // console.log(formJson)
-
-    // But I can actually just use state var???
-    // It's string. Maybe I can convert it to json?
-    // But then how do I use it within database?
-    // It's seems better to use first variant
-    // But again, I can just manually style it for json
-    // This variant looks easier, I'll stick with it for now
 
     // Creating object
-    const postObject = {
+    // TODO: ADD preview_url
+    const post = {
       title: postTitle,
       content: postContent,
-      time: new Date().toJSON()
+      date: format(new Date(), 'YYYY-MM-DD')
     }
-    console.log(postObject)
+    console.log(post)
 
     // Sending object to the server
     postService
-    .create(postObject)
+    .create(post)
     
     // Clearing up
     setPostTitle('')
@@ -56,8 +46,7 @@ const PostForm = () => {
               </div>
           </label>
         </div>
-        {/* Creating a post area.
-        TODO: Make it non-resizable in css file */}
+        {/* Creating a post area.*/}
         <label> {/* Covering textarea with a lable, so it can be selected, when clicking on label */}
           Write your post:
           <div>
