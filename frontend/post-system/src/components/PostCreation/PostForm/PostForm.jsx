@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { format } from 'fecha' // Formatting date to SQL format
-import postService from '../../services/posts'
+import postService from '../../../services/posts'
 import './PostForm.css'
 
 const PostForm = () => {
@@ -57,11 +57,17 @@ const PostForm = () => {
 
   return (
     <div className='post-form'>
-      <form onSubmit={handleSubmit} enctype="multipart/form-data">
+      <form onSubmit={handleSubmit} encType="multipart/form-data">
         <div>
           <label>
               Title:
-              <input className='post-form-title' type='text' name='title' onChange={handleInputChange} />
+              <input
+                className='post-form-title' 
+                name='title' 
+                type='text' 
+                onChange={handleInputChange}
+                maxLength={50} 
+              />
           </label>
         </div>
         {/* Creating a post area.*/}
@@ -73,7 +79,7 @@ const PostForm = () => {
               placeholder={`What's on your mind?`}
               value={postData.content}
               onChange={handleInputChange}
-              maxLength={256}
+              maxLength={1000}
             />
             </div>
         </label>
